@@ -800,7 +800,7 @@ dav_tidy_cache(void)
     if (cache_size > max_cache_size)
         resize_cache();
 
-    if (minimize_mem && next_minimize && time(NULL) > next_minimize) {
+    if (minimize_mem && next_minimize && time(NULL) >= next_minimize) {
         if (debug)
             syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG), "minimize_tree");
         next_minimize = 0;
@@ -1508,7 +1508,7 @@ dav_setattr(dav_node *node, uid_t uid, int sm, mode_t mode, int so,
 dav_stat *
 dav_statfs(void)
 {
-    if (time(NULL) > (fs_stat->utime + retry)) {
+    if (time(NULL) >= (fs_stat->utime + retry)) {
         uint64_t available = 0;
         uint64_t used = 0;
         if (dav_quota(root->path, &available, &used) == 0) {
@@ -1810,8 +1810,8 @@ minimize_tree(dav_node *node)
     if (is_dir(node)) {
 
         int rm = !is_open(node)
-                    && (time(NULL) > (node->utime + 2 * file_refresh))
-                    && (time(NULL) > (node->atime + 2 * file_refresh));
+                    && (time(NULL) >= (node->utime + 2 * file_refresh))
+                    && (time(NULL) >= (node->atime + 2 * file_refresh));
         dav_node *child = node->childs;
         while (child) {
             dav_node *next = child->next;
@@ -2177,7 +2177,7 @@ remove_node(dav_node *node)
 static int
 update_directory(dav_node *dir, time_t refresh)
 {
-    if (dir == backup || time(NULL) <= (dir->utime + refresh))
+    if (dir == backup || time(NULL) < (dir->utime + refresh))
         return 0;
 
     dav_props *props = NULL;
@@ -2650,7 +2650,7 @@ update_cache_file(dav_node *node)
     int ret = 0;
 
     if (is_dirty(node)) {
-        if (get_upload_time(node) >= time(NULL))
+        if (get_upload_time(node) > time(NULL))
             return 0;
         ret = dav_put(node->path, node->cache_path, &node->remote_exists,
                       &node->lock_expire, &node->etag, &node->smtime, -1);
@@ -2669,14 +2669,14 @@ update_cache_file(dav_node *node)
     }
 
     if (gui_optimize && is_cached(node)
-    				&& time(NULL) > (node->utime +file_refresh)) {
+    				&& time(NULL) >= (node->utime +file_refresh)) {
         update_directory(node->parent, file_refresh);
         if (!exists(node) || node->parent == NULL)
             return ENOENT;
     }
 
     if (is_cached(node) && access(node->cache_path, F_OK) == 0) {
-        if (time(NULL) <= (node->utime + file_refresh))
+        if (time(NULL) < (node->utime + file_refresh))
             return 0;
         int modified = 0;
         off_t old_size = node->size;
