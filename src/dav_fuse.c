@@ -516,8 +516,8 @@ fuse_create(void)
 
     out->entry.nodeid = (size_t) node;
     out->entry.generation = out->entry.nodeid;
-    out->entry.entry_valid = 1;
-    out->entry.attr_valid = 1;
+    out->entry.entry_valid = 0;
+    out->entry.attr_valid = 0;
     out->entry.entry_valid_nsec = 0;
     out->entry.attr_valid_nsec = 0;
     set_attr(&out->entry.attr, node);
@@ -553,7 +553,7 @@ fuse_getattr(void)
     }
 
     set_attr(&out->attr, (dav_node *) ((size_t) ih->nodeid));
-    out->attr_valid = 1;
+    out->attr_valid = 0;
     out->attr_valid_nsec = 0;
     out->dummy = 0;
 
@@ -626,8 +626,8 @@ fuse_lookup(void)
 
     out->nodeid = (size_t) node;
     out->generation = out->nodeid;
-    out->entry_valid = 1;
-    out->attr_valid = 1;
+    out->entry_valid = 0;
+    out->attr_valid = 0;
     out->entry_valid_nsec = 0;
     out->attr_valid_nsec = 0;
     set_attr(&out->attr, node);
@@ -666,8 +666,8 @@ fuse_mkdir(void)
 
     out->nodeid = (size_t) node;
     out->generation = out->nodeid;
-    out->entry_valid = 1;
-    out->attr_valid = 1;
+    out->entry_valid = 0;
+    out->attr_valid = 0;
     out->entry_valid_nsec = 0;
     out->attr_valid_nsec = 0;
     set_attr(&out->attr, node);
@@ -712,8 +712,8 @@ fuse_mknod(void)
 
     out->nodeid = (size_t) node;
     out->generation = out->nodeid;
-    out->entry_valid = 1;
-    out->attr_valid = 1;
+    out->entry_valid = 0;
+    out->attr_valid = 0;
     out->entry_valid_nsec = 0;
     out->attr_valid_nsec = 0;
     set_attr(&out->attr, node);
@@ -895,7 +895,7 @@ fuse_setattr(void)
     }
 
     set_attr(&out->attr, (dav_node *) ((size_t) ih->nodeid));
-    out->attr_valid = 1;
+    out->attr_valid = 0;
     out->attr_valid_nsec = 0;
     out->dummy = 0;
 
